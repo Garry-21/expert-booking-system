@@ -9,12 +9,17 @@ const connectDB = async () => {
 
     // If no external MongoDB, use in-memory server
     try {
+      if (!uri) throw new Error("No MONGODB_URI provided");
       await mongoose.connect(uri, {
         serverSelectionTimeoutMS: 3000,
       });
       console.log('✅ MongoDB Connected (external)');
       return;
     } catch (err) {
+      if (process.env.VERCEL) {
+        console.error('❌ VERCEL DEPLOYMENT ERROR: You MUST provide a real MONGODB_URI in your Vercel Environment Variables! In-memory databases crash Vercel serverless functions.');
+        throw new Error('Missing MONGODB_URI in Vercel Environment Variables');
+      }
       console.log('⚠️  External MongoDB unavailable, starting in-memory server...');
     }
 

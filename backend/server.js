@@ -88,8 +88,13 @@ app.use((req, res) => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
 
-module.exports = { app, io };
+// Vercel serverless environment compatibility
+if (process.env.VERCEL) {
+  module.exports = app;
+} else {
+  server.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+  });
+  module.exports = { app, io };
+}
