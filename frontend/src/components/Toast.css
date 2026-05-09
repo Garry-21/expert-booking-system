@@ -1,0 +1,80 @@
+.toast {
+  position: fixed;
+  top: calc(var(--nav-height) + 16px);
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  min-width: 300px;
+  max-width: 440px;
+  animation: toastIn var(--transition-base) ease-out;
+}
+
+.toast-exit {
+  animation: toastOut 300ms ease-in forwards;
+}
+
+@keyframes toastOut {
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+}
+
+.toast-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.toast-success .toast-icon {
+  background: var(--status-confirmed-bg);
+  color: var(--status-confirmed);
+}
+
+.toast-error .toast-icon {
+  background: var(--status-cancelled-bg);
+  color: var(--status-cancelled);
+}
+
+.toast-warning .toast-icon {
+  background: var(--status-pending-bg);
+  color: var(--status-pending);
+}
+
+.toast-info .toast-icon {
+  background: var(--status-completed-bg);
+  color: var(--status-completed);
+}
+
+.toast-message {
+  flex: 1;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.toast-close {
+  color: var(--text-tertiary);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.toast-close:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}

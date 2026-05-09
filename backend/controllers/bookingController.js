@@ -1,12 +1,8 @@
 const Booking = require('../models/Booking');
 const TimeSlot = require('../models/TimeSlot');
-const mongoose = require('mongoose');
 
-// Create booking with double booking prevention
+// Create booking with double booking prevention (atomic operation)
 exports.createBooking = async (req, res) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
   try {
     const {
       expertId,
@@ -20,39 +16,18 @@ exports.createBooking = async (req, res) => {
       notes,
     } = req.validatedData;
 
-    // Check if time slot exists and is available
-    const timeSlot = await TimeSlot.findById(timeSlotId).session(session);
+    // Atomically mark the time slot as booked (prevents double booking via race condition)
+    // findOneAndUpdate with isBooked: false ensures only one request can book the slot
+    const timeSlot = await TimeSlot.findOneAndUpdate(
+      { _id: timeSlotId, isBooked: false },
+      { $set: { isBooked: true } },
+      { new: true }
+    );
 
     if (!timeSlot) {
-      await session.abortTransaction();
-      return res.status(404).json({
-        success: false,
-        message: 'Time slot not found',
-      });
-    }
-
-    // Prevent double booking - check if slot is already booked
-    if (timeSlot.isBooked) {
-      await session.abortTransaction();
       return res.status(409).json({
         success: false,
         message: 'This time slot is no longer available. It has been booked by another user.',
-      });
-    }
-
-    // Check for existing bookings on the same date/time
-    const existingBooking = await Booking.findOne({
-      expertId,
-      bookingDate: new Date(bookingDate),
-      startTime,
-      status: { $in: ['pending', 'confirmed'] },
-    }).session(session);
-
-    if (existingBooking) {
-      await session.abortTransaction();
-      return res.status(409).json({
-        success: false,
-        message: 'This time slot is already booked',
       });
     }
 
@@ -69,14 +44,22 @@ exports.createBooking = async (req, res) => {
       notes,
     });
 
-    await booking.save({ session });
+    await booking.save();
 
-    // Mark time slot as booked
-    timeSlot.isBooked = true;
+    // Link booking to time slot
     timeSlot.bookedBy = booking._id;
-    await timeSlot.save({ session });
+    await timeSlot.save();
 
-    await session.commitTransaction();
+    // Emit real-time slot update via Socket.io
+    if (req.io) {
+      req.io.to(`expert-${expertId}`).emit('slot-booked', {
+        slotId: timeSlotId,
+        expertId,
+        date: bookingDate,
+        startTime,
+        endTime,
+      });
+    }
 
     res.status(201).json({
       success: true,
@@ -84,14 +67,11 @@ exports.createBooking = async (req, res) => {
       data: booking,
     });
   } catch (error) {
-    await session.abortTransaction();
     res.status(500).json({
       success: false,
       message: 'Error creating booking',
       error: error.message,
     });
-  } finally {
-    session.endSession();
   }
 };
 
@@ -121,11 +101,30 @@ exports.updateBookingStatus = async (req, res) => {
       });
     }
 
-    // If cancelled, free up the time slot
+    // If cancelled, free up the time slot and emit event
     if (status === 'cancelled') {
       await TimeSlot.findByIdAndUpdate(booking.timeSlotId, {
         isBooked: false,
         bookedBy: null,
+      });
+
+      if (req.io) {
+        req.io.to(`expert-${booking.expertId}`).emit('slot-freed', {
+          slotId: booking.timeSlotId,
+          expertId: booking.expertId.toString(),
+          date: booking.bookingDate,
+          startTime: booking.startTime,
+          endTime: booking.endTime,
+        });
+      }
+    }
+
+    // Emit booking status update
+    if (req.io) {
+      req.io.emit('booking-status-updated', {
+        bookingId: id,
+        status,
+        expertId: booking.expertId.toString(),
       });
     }
 
@@ -156,7 +155,7 @@ exports.getBookingsByEmail = async (req, res) => {
     }
 
     const bookings = await Booking.find({ clientEmail: email.toLowerCase() })
-      .populate('expertId', 'name category')
+      .populate('expertId', 'name category image')
       .sort({ bookingDate: -1 })
       .lean();
 

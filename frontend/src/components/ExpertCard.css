@@ -1,0 +1,126 @@
+.expert-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.expert-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border);
+}
+
+.expert-card:active {
+  transform: translateY(-2px);
+}
+
+.expert-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.expert-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+}
+
+.expert-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: #fffbeb;
+  border-radius: var(--radius-full);
+  color: #d97706;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.expert-rating svg {
+  fill: #fbbf24;
+  stroke: #fbbf24;
+}
+
+.expert-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.expert-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+.expert-category-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  width: fit-content;
+  letter-spacing: 0.2px;
+}
+
+.expert-meta {
+  display: flex;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.expert-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-light);
+}
+
+.view-profile-text {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.view-profile-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: var(--accent-light);
+  color: var(--accent);
+  transition: all var(--transition-fast);
+}
+
+.expert-card:hover .view-profile-arrow {
+  background: var(--accent);
+  color: white;
+  transform: translateX(2px);
+}

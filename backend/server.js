@@ -14,18 +14,27 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    methods: ['GET', 'POST'],
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PATCH'],
   },
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Connect to MongoDB
 connectDB();
+
+// Make io accessible to routes (MUST be before route declarations)
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
 
 // Routes
 app.use('/api/experts', expertRoutes);
@@ -57,11 +66,7 @@ io.on('connection', (socket) => {
   });
 });
 
-// Make io accessible to routes
-app.use((req, res, next) => {
-  req.io = io;
-  next();
-});
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {

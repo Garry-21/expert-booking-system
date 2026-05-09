@@ -1,0 +1,123 @@
+.listing-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  gap: 16px;
+}
+
+.listing-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -1px;
+  line-height: 1.2;
+}
+
+.listing-subtitle {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.listing-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* Grid */
+.experts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* Error State */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 12px;
+  color: var(--text-tertiary);
+  text-align: center;
+  animation: fadeIn var(--transition-base) ease-out;
+}
+
+.error-state h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.error-state p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.retry-btn {
+  margin-top: 8px;
+  padding: 10px 24px;
+  background: var(--accent);
+  color: white;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all var(--transition-fast);
+}
+
+.retry-btn:hover {
+  background: var(--accent-hover);
+  box-shadow: var(--shadow-accent);
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 8px;
+  text-align: center;
+  animation: fadeIn var(--transition-base) ease-out;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 8px;
+}
+
+.empty-state h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.empty-state p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 600px) {
+  .listing-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .listing-title {
+    font-size: 1.6rem;
+  }
+  .experts-grid {
+    grid-template-columns: 1fr;
+  }
+}
