@@ -14,14 +14,14 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: '*',
     methods: ['GET', 'POST', 'PATCH'],
   },
 });
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: '*',
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
 }));
 app.use(express.json());
