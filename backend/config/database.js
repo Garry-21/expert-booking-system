@@ -14,6 +14,7 @@ const connectDB = async () => {
         serverSelectionTimeoutMS: 3000,
       });
       console.log('✅ MongoDB Connected (external)');
+      await seedDatabase();
       return;
     } catch (err) {
       if (process.env.VERCEL) {
