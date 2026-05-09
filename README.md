@@ -90,6 +90,4 @@ Uses Socket.io for real-time updates:
 Frontend: Vercel/Netlify
 Backend: Render/Railway/Heroku
 
-## Deadline
 
-May 10, 2026 - 2:00 PM
